@@ -3,6 +3,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import * as styles from "styles/components.css";
 import { useAddElement } from "utils/use_add_element";
 import React, { useState } from "react";
+import { requestExport } from "@canva/design";
 
 export const App: React.FC = () => {
   const addElement = useAddElement();
@@ -28,10 +29,30 @@ export const App: React.FC = () => {
     setTextContent(value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("Design Overview:", designOverview);
     console.log("Text Content:", textContent);
-    // Placeholder for the logic to export the design and call the openai API
+
+    try {
+      // Open export dialog and request export as JPEG
+      const result = await requestExport({
+        acceptedFileTypes: ["jpg"],
+      });
+
+      if (result.status === "completed" && result.exportBlobs?.length) {
+        // If export was successful, log the URL of the exported JPEG
+        const exportUrl = result.exportBlobs[0].url;
+        console.log("Export successful. JPEG URL:", exportUrl);
+        //Placeholder for further processing or API call with exportUrl, designOverview and textContent
+
+      } else if (result.status === "aborted") {
+        console.log("Export was canceled by the user.");
+      } else {
+        console.error("Export failed or returned an unexpected result:", result);
+      }
+    } catch (error) {
+      console.error("Error during export:", error);
+    }
   };
 
   return (
