@@ -1,18 +1,38 @@
-import { Button, Rows, Text } from "@canva/app-ui-kit";
+import { Button, Rows, Text, FormField, MultilineInput } from "@canva/app-ui-kit";
 import { FormattedMessage, useIntl } from "react-intl";
 import * as styles from "styles/components.css";
 import { useAddElement } from "utils/use_add_element";
+import React, { useState } from "react";
 
-export const App = () => {
+export const App: React.FC = () => {
   const addElement = useAddElement();
-  const onClick = () => {
+  /*const onClick = () => {
     addElement({
       type: "text",
       children: ["Hello world!"],
     });
-  };
+  };*/
 
   const intl = useIntl();
+
+  // State for design overview and text content inputs
+  const [designOverview, setDesignOverview] = useState<string>('');
+  const [textContent, setTextContent] = useState<string>('');
+
+  // Handle input changes
+  const handleDesignOverviewChange = (value: string) => {
+    setDesignOverview(value);
+  };
+
+  const handleTextContentChange = (value: string) => {
+    setTextContent(value);
+  };
+
+  const handleSubmit = () => {
+    console.log("Design Overview:", designOverview);
+    console.log("Text Content:", textContent);
+    // Placeholder for the logic to export the design and call the openai API
+  };
 
   return (
     <div className={styles.scrollContainer}>
@@ -29,11 +49,42 @@ export const App = () => {
             }}
           />
         </Text>
-        <Button variant="primary" onClick={onClick} stretch>
+
+        <FormField
+            label="Design Overview"
+            description="Label for the design overview input field"
+            control={props => 
+              <MultilineInput
+                placeholder="Describe the design context (e.g., storybook page with a sunny background)"
+                value={designOverview}
+                onChange={handleDesignOverviewChange}
+                {...props}
+              />
+
+            }
+            
+          />
+        
+        <FormField
+            label="Text Content"
+            description="Label for the text content input field"
+            control={props => 
+              <MultilineInput
+                placeholder="Enter the text to add to the design (e.g., 'Once upon a time...')"
+                value={textContent}
+                onChange={handleTextContentChange}
+                {...props}
+              />
+
+            }
+            
+          />
+
+        <Button variant="primary" onClick={handleSubmit} stretch>
           {intl.formatMessage({
-            defaultMessage: "Do something cool",
+            defaultMessage: "Submit for Suggestions",
             description:
-              "Button text to do something cool. Creates a new text element when pressed.",
+              "Button text to submit inputs and get suggestions",
           })}
         </Button>
       </Rows>
