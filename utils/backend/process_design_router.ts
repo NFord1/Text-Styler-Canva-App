@@ -1,5 +1,4 @@
 import * as express from "express";
-//import fetch from "node-fetch";
 import OpenAI from "openai";
 
 const router = express.Router();
@@ -10,17 +9,12 @@ router.post("/process-design", async (req, res) => {
     const { exportUrl, designOverview, textContent } = req.body;
 
     try {
-        // Dynamically imoprt node-fetch so that it is compatible with the CommonJS module system
-        //const fetch = (await import("node-fetch")).default;
-        //const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-
 
         // Download the exported design file
         const fileResponse = await fetch(exportUrl);
         if (!fileResponse.ok) {
             return res.status(500).json({error: "Failed to download design file"});
         }
-        //const imageData = await fileResponse.buffer();
 
         // Convert image to base64
         const arrayBuffer = await fileResponse.arrayBuffer();
@@ -39,7 +33,6 @@ router.post("/process-design", async (req, res) => {
                     ],
                 },
             ],
-            //max_tokens: 100,
         });
 
         const suggestions = openaiResponse.choices?.[0]?.message?.content?.trim() || "No suggestions available";
