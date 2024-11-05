@@ -5,6 +5,8 @@ import * as https from "https";
 import * as fs from "fs";
 import type { Request, Response, NextFunction } from "express";
 import debug from "debug";
+import processDesignRouter from "../process_design_router";
+import * as cors from "cors";
 
 const serverDebug = debug("server");
 
@@ -37,6 +39,8 @@ export function createBaseServer(router: express.Router): BaseServer {
   const app = express();
   app.use(express.json());
 
+  app.use(cors({origin: ["http://localhost:8080", "https://app-aagvzhi5rqy.canva-apps.com"]}));
+
   // It can help to provide an extra layer of obsecurity to reduce server fingerprinting.
   app.disable("x-powered-by");
 
@@ -50,6 +54,9 @@ export function createBaseServer(router: express.Router): BaseServer {
     serverDebug(`${new Date().toISOString()}: ${req.method} ${req.url}`);
     next();
   });
+
+  // Register the process-design router
+  app.use(processDesignRouter);
 
   // Custom routes router
   app.use(router);
