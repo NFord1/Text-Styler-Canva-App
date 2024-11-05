@@ -1,5 +1,7 @@
 import * as express from "express";
 import OpenAI from "openai";
+import "dotenv/config";
+
 
 const router = express.Router();
 
@@ -20,15 +22,15 @@ router.post("/process-design", async (req, res) => {
         const arrayBuffer = await fileResponse.arrayBuffer();
         const base64Image = Buffer.from(arrayBuffer).toString("base64");
 
-        // Call OpenAI API
-        const openai = new OpenAI({ apiKey: "REMOVED_API_KEY"});
+        // Call OpenAI API 
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY});
         const openaiResponse = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
                 {
                     role: "user",
                     content: [
-                        {type: "text", text: `Analyze the design with context:\nDesign Overview: ${designOverview}\nText Content: ${textContent}\nSuggest font style and color for this design.`},
+                        {type: "text", text: `Analyze this image with context:\nDesign Overview: ${designOverview}\nText Content: ${textContent}\nSuggest text placement, font style and color for this design so that the text fits well with the design overview and content and is easy to read against the background image.`},
                         {type: "image_url", image_url: {url: `data:image/jpeg;base64,${base64Image}`, detail: "low"}},
                     ],
                 },
