@@ -118,9 +118,14 @@ export const App: React.FC = () => {
         </Button>
 
         {suggestions && (
-          <Text >
-            <strong>Font Style * Color Suggestions:</strong> {suggestions}
-          </Text>
+          <div>
+            <Text >
+              <strong>Font Style & Color Suggestions:</strong> 
+            </Text>
+            {suggestions.split("\n").map((line, index) => (
+              <Text key={index}>{line}</Text>
+            ))}
+          </div>
         )}
       </Rows>
     </div>
