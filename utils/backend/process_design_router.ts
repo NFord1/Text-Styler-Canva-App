@@ -30,15 +30,30 @@ router.post("/process-design", async (req, res) => {
                 {
                     role: "user",
                     content: [
-                        {type: "text", text: `Analyze this image with context:\nDesign Overview: ${designOverview}\nText Content: ${textContent}\nSuggest text placement, font style and color for this design so that the text fits well with the design overview and content and is easy to read against the background image.`},
+                        {type: "text", text: `Analyze this image with context:
+                        Design Overview: ${designOverview}
+                        Text Content to add: ${textContent}
+
+                        Suggest text placement, font style, and color for this text content so that the text styling is consistent with the design overview and is easy to read with this image as the background. Structure your response in the following format: 
+                        - **Text Placement**: (suggest placement locations)
+                        - **Font Style**: (suggest 3 or 4 font styles with brief explanation)
+                        - **Font Color**: (suggest 3 or 4 colors with brief explanation and corresponding hexcode)
+                        - **Additional Suggestions**: (any extra tips)
+
+                        Please keep the response concise and well-organized for easy readability.`},
                         {type: "image_url", image_url: {url: `data:image/jpeg;base64,${base64Image}`, detail: "low"}},
                     ],
                 },
             ],
         });
 
-        const suggestions = openaiResponse.choices?.[0]?.message?.content?.trim() || "No suggestions available";
-        res.json({suggestions});
+        // Get suggestions from OpenAI response
+        const rawSuggestions = openaiResponse.choices?.[0]?.message?.content?.trim() || "No suggestions available";
+
+        //Apply formatting to make the response HTML-friendly
+        const formattedSuggestions = rawSuggestions.replace(/### /g, "").replace(/\*\*/g, "").replace(/\n/g, "\n");
+
+        res.json({suggestions: formattedSuggestions});
     } catch (error) {
         console.error("Error processing design:", error);
         res.status(500).json({error: "Failed to process design"});
