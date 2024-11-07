@@ -29,24 +29,35 @@ router.post("/process-design", async (req, res) => {
             messages: [
                 {
                     role: "user",
-                    content: [
+                    content: [ 
                         {type: "text", text: `Analyze this image with context:
-                        Design Overview: ${designOverview}
-                        Text Content to add: ${textContent}
-
-                        Suggest text placement, font style, and color for this text content so that the text styling is consistent with the design overview and is easy to read with this image as the background. Structure your response in the following format: 
-                        - **Text Placement**: (suggest placement locations)
-                        - **Font Style**: (suggest 3 or 4 font styles with brief explanation)
-                        - **Font Color**: (suggest 3 or 4 colors with brief explanation and corresponding hexcode)
-                        - **Additional Suggestions**: (any extra tips)
-
-                        Please keep the response concise and well-organized for easy readability.`},
+                            Design Overview: ${designOverview}
+                            Text Content to add: ${textContent}
+    
+                            Suggest text placement, font style, and color for this text content so that the text styling is consistent with the design overview and is easy to read with this image as the background. Structure your response in the following format: 
+                            - **Text Placement**: (suggest placement locations)
+                            - **Font Style**: (suggest 3 or 4 font styles with brief explanation)
+                            - **Font Color**: (suggest 3 or 4 colors with brief explanation and corresponding hexcode)
+                            - **Additional Suggestions**: (any extra tips)
+    
+                            Please keep the response concise and well-organized for easy readability.`},
                         {type: "image_url", image_url: {url: `data:image/jpeg;base64,${base64Image}`, detail: "low"}},
                     ],
                 },
             ],
         });
+        // Alternate prompt for text already in position in design
+        /*{type: "text", text: `Analyze this image with context:
+                        Design Overview: ${designOverview}
 
+                        Suggest font style, and color for the text in this image to improve the design. The text styling should be consistent with the design overview and easy to read against the background. Structure your response in the following format: 
+                        - **Font Style**: (suggest 3 or 4 font styles with brief explanation)
+                        - **Font Color**: (suggest 3 or 4 colors with brief explanation and corresponding hexcode)
+                        - **Additional Suggestions**: (any extra tips)
+
+                        Please keep the response concise and well-organized for easy readability.`},
+                        {type: "image_url", image_url: {url: `data:image/jpeg;base64,${base64Image}`, detail: "low"}},*/
+        
         // Get suggestions from OpenAI response
         const rawSuggestions = openaiResponse.choices?.[0]?.message?.content?.trim() || "No suggestions available";
 
